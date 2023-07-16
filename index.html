@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        a {
+            user-select: none;
+        }
+        body {
+            background-color: green;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .clickpad {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: green;
+            text-align: center;
+            color: #fff;
+            cursor: pointer;
+            font-size: xx-large;
+            z-index: -1;
+        }
+        .font_01 {
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-size: larger;
+        }
+    </style>
+</head>
+
+<body onmousedown="mouseClick();" oncontextmenu="return false;" >
+
+    <div id="clickpad" class="click"></div>
+    <a class="font_01">Clicks: <span id="count">0</span></a>
+    <a class="font_01">Fast double click count: <span id="dcCount">0</span></a>
+    <a class="font_01" id="delta_time">0</a>
+    <a class="font_01">Key: <span id="keyindex">0</span></a>
+    <script>
+
+        var deltaTime = document.getElementById('delta_time');
+        var clicks = document.getElementById('count');
+        var dcCount = document.getElementById('dcCount');
+        var body = document.getElementsByTagName('body')[0];
+        var keyindex = document.getElementById('keyindex');
+
+        var prevClickMicrotime = microtime(true);
+        var prevClickKey = 0;
+        function microtime(get_as_float) {
+
+            var now = new Date().getTime() / 1000;
+            var s = parseInt(now, 10);
+
+            return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
+        }
+
+        function clickEvent(key) {
+            
+            clickTime = microtime(true);
+            diff = clickTime - prevClickMicrotime;
+            if (diff <= 0.08 && key == prevClickKey) {
+                body.style.background = 'red';
+                dcCount.textContent++;
+            }
+            else {
+                body.style.background = 'green';
+            }
+            deltaTime.textContent = diff;
+            prevClickMicrotime = clickTime;
+            prevClickKey = key;
+            keyindex.textContent = key;
+            clicks.textContent++;
+        }
+
+        function mouseClick() {
+            var e = window.event;
+            console.log(e);
+            clickEvent(e.which);
+            return false;
+        }
+    </script>
+</body>
+
+</html>
